@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT售中业务应知应会考试系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-start {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            font-size: 1.3em;
+            padding: 15px 40px;
+        }
+        
+        .btn-admin {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .btn-export {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .question-number {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #34495e;
+        }
+        
+        .options {
+            margin-left: 20px;
+        }
+        
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+        
+        .option.selected {
+            border-color: #3498db;
+            background: #e1f0fa;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .result-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .result-item.correct {
+            border-left-color: #27ae60;
+            background: #d5f4e6;
+        }
+        
+        .result-item.incorrect {
+            border-left-color: #e74c3c;
+            background: #fadbd8;
+        }
+        
+        .score-display {
+            font-size: 3em;
+            text-align: center;
+            color: #2c3e50;
+            margin: 20px 0;
+        }
+        
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .ranking-table th, .ranking-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .ranking-table th {
+            background: #34495e;
+            color: white;
+        }
+        
+        .ranking-table tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1em;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1em;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .exam-info {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .login-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .login-form input {
+            margin-bottom: 15px;
+        }
+        
+        .admin-panel {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .time-display {
+            text-align: center;
+            font-size: 1.1em;
+            color: #7f8c8d;
+            margin: 10px 0;
+        }
+        
+        .admin-badge {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: #e74c3c;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ICT售中业务应知应会考试系统</h1>
+            <p>常州移动 - 内部培训考核</p>
+            <div id="admin-badge" class="admin-badge" style="display: none;">👑 管理员</div>
+        </div>
+        
+        <div class="content">
+            <!-- 登录屏幕 -->
+            <div id="login-screen" class="screen active">
+                <div class="login-form">
+                    <h2>考生信息登录</h2>
+                    <div class="exam-info">
+                        <strong>考试信息：</strong><br>
+                        • 题目数量：60题（选择题30题 + 判断题20题 + 简答题10题）<br>
+                        • 分值分配：选择题60分 + 判断题20分 + 简答题20分 = 总分100分<br>
+                        • 考试时间：1小时<br>
+                        • 总分：100分<br>
+                        • 合格标准：60分及以上
+                    </div>
+                    <input type="text" id="user-name" placeholder="请输入您的姓名" required>
+                    <input type="text" id="user-department" placeholder="请输入您的部门" required>
+                    <input type="text" id="user-employee-id" placeholder="请输入您的手机号" required>
+                    <div style="text-align: center;">
+                        <button class="btn btn-start" onclick="startExam()">开始考试</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 考试屏幕 -->
+            <div id="exam-screen" class="screen">
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                <div class="time-display" id="time-display">开始时间: --:--:--</div>
+                
+                <div id="question-display">
+                    <!-- 题目将动态插入到这里 -->
+                </div>
+                
+                <div class="navigation">
+                    <button class="btn" id="prev-btn" onclick="previousQuestion()">上一题</button>
+                    <span id="question-counter">题目 1/60</span>
+                    <button class="btn" id="next-btn" onclick="nextQuestion()">下一题</button>
+                    <button class="btn" id="submit-btn" onclick="submitExam()" style="display:none; background:linear-gradient(135deg, #e74c3c, #c0392b)">提交试卷</button>
+                </div>
+            </div>
+            
+            <!-- 结果屏幕 - 员工视图 -->
+            <div id="result-screen" class="screen">
+                <h2>您的考试结果</h2>
+                <div class="score-display" id="score-display">0分</div>
+                <div id="pass-status" style="text-align:center; font-size:1.2em; margin-bottom:20px;"></div>
+                
+                <h3>答题详情</h3>
+                <div id="result-details">
+                    <!-- 答题详情将动态插入到这里 -->
+                </div>
+                
+                <h3>您的排名</h3>
+                <table class="ranking-table" id="ranking-table">
+                    <tr>
+                        <th>排名</th>
+                        <th>姓名</th>
+                        <th>部门</th>
+                        <th>工号</th>
+                        <th>分数</th>
+                        <th>考试时间</th>
+                    </tr>
+                </table>
+                
+                <div style="text-align:center; margin-top:20px;">
+                    <button class="btn" onclick="restartExam()">重新考试</button>
+                    <button class="btn" onclick="viewPersonalStats()">查看我的统计</button>
+                </div>
+            </div>
+            
+            <!-- 管理员屏幕 -->
+            <div id="admin-screen" class="screen">
+                <h2>👑 管理员成绩管理系统 - 龚霜</h2>
+                
+                <div class="admin-panel">
+                    <h3>📊 系统统计概览</h3>
+                    <div class="stats-grid" id="stats-grid">
+                        <!-- 统计信息动态生成 -->
+                    </div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-export" onclick="exportAllScores()">导出全部成绩</button>
+                        <button class="btn btn-admin" onclick="showAllScores()">查看详细成绩</button>
+                        <button class="btn" onclick="clearAllScores()">清空所有成绩</button>
+                        <button class="btn" onclick="backToLogin()">返回登录</button>
+                    </div>
+                </div>
+                
+                <div id="admin-score-list">
+                    <!-- 管理员成绩列表 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 系统配置 ==========
+        const ADMIN_NAME = "龚霜"; // 管理员姓名
+        
+        // ========== 完整的60题数据 ==========
+        const questions = [
+            // 选择题 1-30
+            {"type":"选择题","number":1,"text":"项目转入售中阶段后，售中交付经理应在多少天内完成接收？","options":["1天","3天","5天","7天"],"correctAnswer":"B","explanation":"根据转售中时效要求，需在3个工作日内完成接收。"},
+            {"type":"选择题","number":2,"text":"以下哪项不是施工前必须核查的施工单位资质？","options":["单位营业执照","施工单位资质证书","施工人员学历证明","意外伤害保险单"],"correctAnswer":"C","explanation":"施工前核查重点是资质与安全，不强制要求学历证明。"},
+            {"type":"选择题","number":3,"text":"项目安全管理'三检查'不包括以下哪项？","options":["检查人员岗前安全培训","检查人员安全护具使用","检查施工人员工资发放","检查现场安全告示张贴"],"correctAnswer":"C","explanation":"工资发放属于劳务管理，非直接安全管控点。"},
+            {"type":"选择题","number":4,"text":"项目实际验收时间不晚于计划验收时间，且通过审核，称为？","options":["项目交维","项目纳管","及时交付","及时接维"],"correctAnswer":"C","explanation":"文档明确定义为'及时交付'。"},
+            {"type":"选择题","number":5,"text":"项目终验完成后，必须在多少自然日内完成接维才算及时？","options":["30天","60天","90天","120天"],"correctAnswer":"B","explanation":"交维及时率的核心定义：终验完成后60个自然日内需完成售后接维。"},
+            {"type":"选择题","number":6,"text":"对于硬件集成类项目，随工日志每月至少更新几次？","options":["1次","2次","4次","按需更新"],"correctAnswer":"B","explanation":"过程规范要求，未完工项目每月随工日志需达2条。"},
+            {"type":"选择题","number":7,"text":"项目变更金额超过多少比例需要重新决策？","options":["5%","10%","15%","20%"],"correctAnswer":"B","explanation":"项目变更管理规范中明确规定变更超过10%需要重新决策。"},
+            {"type":"选择题","number":8,"text":"以下哪项是防范高空坠落的主要措施？","options":["持证上岗","正确佩戴安全帽","系好安全带","现场整理整顿"],"correctAnswer":"C","explanation":"安全关键管控点中针对高空坠落的专项措施是系好安全带。"},
+            {"type":"选择题","number":9,"text":"售中APP中，第三方支撑人员通过哪个应用入口登录？","options":["OA平台","阿拉盯","阿拉盯商户版","DICT系统"],"correctAnswer":"C","explanation":"售中APP实施流程中明确了第三方支撑人员通过'阿拉盯商户版'登录。"},
+            {"type":"选择题","number":10,"text":"项目验收单盖章时，公章主体应与什么文件保持一致？","options":["后向合同","前向合同","施工组织设计","安全责任书"],"correctAnswer":"B","explanation":"资料典型问题案例中强调公章主体必须与前向合同签约主体保持一致。"},
+            {"type":"选择题","number":11,"text":"ICT项目售中交付的全流程大致分为几个阶段？","options":["4个","5个","6个","7个"],"correctAnswer":"C","explanation":"售中交付环节内容简介中明确分为6个阶段。"},
+            {"type":"选择题","number":12,"text":"项目售中团队组建时，如项目涉及CT业务，必须包含哪位成员？","options":["财务经理","CT业务管理员","人力资源经理","法律顾问"],"correctAnswer":"B","explanation":"项目售中团队组建要求中明确说明涉及CT业务需CT业务管理员参加。"},
+            {"type":"选择题","number":13,"text":"项目开工前，应与后向集成商签订以下哪项协议以明确安全责任？","options":["劳动合同","保密协议","安全施工协议","技术开发协议"],"correctAnswer":"C","explanation":"项目安全管理要求中的首要步骤是签订《安全施工协议》。"},
+            {"type":"选择题","number":14,"text":"以下哪种情况属于'物体打击'的预防措施？","options":["定期检修消防设施","正确佩戴安全帽","非电工禁止操作电气","涉电作业持证上岗"],"correctAnswer":"B","explanation":"项目安全管理-物体打击部分的核心预防措施是正确佩戴安全帽。"},
+            {"type":"选择题","number":15,"text":"2025年ICT项目的目标综合拿单到交付平均时长是不高于多少天？","options":["100天","120天","135天","150天"],"correctAnswer":"C","explanation":"ICT售中考核指标说明中的核心目标值为135天。"},
+            {"type":"选择题","number":16,"text":"在DICT系统中，哪项指标是通过电话回访客户联系人进行打分的？","options":["项目交付率","项目交维率","项目满意度","项目纳管率"],"correctAnswer":"C","explanation":"项目满意度统计口径说明是通过省公司电话回访进行打分。"},
+            {"type":"选择题","number":17,"text":"在售中APP中，项目经理为硬件集成类项目发起具体任务指派给第三方人员，应使用哪个功能？","options":["随工日志","问题直通车","作业调度","软件周报"],"correctAnswer":"C","explanation":"PC端功能中对'作业调度'的定义是发起任务指派给第三方人员。"},
+            {"type":"选择题","number":18,"text":"项目验收资料中，终验报告的实际日期与DICT系统中终验完成日期应如何？","options":["可以不同，无需关注","系统日期可任意修改","必须保持一致","系统日期优先于报告日期"],"correctAnswer":"C","explanation":"资料典型问题案例集中指出'售中节点时间与报告不符'属于问题。"},
+            {"type":"选择题","number":19,"text":"项目质量管理中，发现安装工艺问题，首先应该怎么做？","options":["立即处罚","要求立即整改并明确时间节点","忽略继续施工","直接更换施工单位"],"correctAnswer":"B","explanation":"项目质量管理要求中的标准流程是要求立即整改并明确时间节点。"},
+            {"type":"选择题","number":20,"text":"对于'纯建设'模式的项目，以下描述正确的是？","options":["没有售中环节","交付后直接转维","交付后即可结项","不计算交付及时率"],"correctAnswer":"C","explanation":"DICT系统实施流程中关于项目实施类型的解释：纯建设模式项目交付后即可结项。"},
+            {"type":"选择题","number":21,"text":"售前经理需在前向合同签订后几个工作日内向售中交付经理移交售前资料？","options":["3个","5个","7个","10个"],"correctAnswer":"B","explanation":"售前资料移交的时效要求是5个工作日内完成移交。"},
+            {"type":"选择题","number":22,"text":"施工现场的临时用电敷设，室内配线距地面高度不得小于多少米？","options":["1.5米","2.0米","2.5米","3.0米"],"correctAnswer":"C","explanation":"安全关键管控点-用电安全中的具体规范要求不低于2.5米。"},
+            {"type":"选择题","number":23,"text":"项目出现变更时，售中交付经理首先应怎么做？","options":["直接通知后向单位变更","自行决定变更方案","上报售前经理","暂停项目等待指令"],"correctAnswer":"C","explanation":"项目变更管理流程的起始步骤是上报售前经理。"},
+            {"type":"选择题","number":24,"text":"以下哪项是'项目纳管'的正确描述？","options":["项目在DICT中转入售中","项目在APP中完成信息登记","项目完成终验","项目收到客户付款"],"correctAnswer":"B","explanation":"名词解释及示例中对'项目纳管'的定义是在APP中完成信息登记。"},
+            {"type":"选择题","number":25,"text":"在售中APP中，自有人员通过哪个入口可以进入PC端管理界面？","options":["阿拉盯商户版","OA平台或阿拉盯","仅限OA平台","仅限阿拉盯"],"correctAnswer":"B","explanation":"售中APP实施流程-产品介绍中说明了自有人员通过OA平台或阿拉盯登录。"},
+            {"type":"选择题","number":26,"text":"开工报告应由哪个单位盖章？","options":["仅施工单位","仅建设单位","建设单位和施工单位","监理单位（如有）"],"correctAnswer":"C","explanation":"资料典型问题案例集-用印不规范中强调了建设单位和施工单位均需盖章。"},
+            {"type":"选择题","number":27,"text":"以下哪项不属于项目廉洁要求中严格禁止的行为？","options":["向项目有关人员提供财物","索取后向单位支付费用","严格遵守商业道德","影响项目公正开展"],"correctAnswer":"C","explanation":"项目廉洁要求中，C选项是应遵守的原则，而非禁止行为。"},
+            {"type":"选择题","number":28,"text":"硬件设备进场时，必须进行哪项工作？","options":["直接安装","到货开箱验收并签收","仅核对数量","仅检查型号"],"correctAnswer":"B","explanation":"项目质量管理要求中的关键步骤是到货开箱验收并签订《设备到货签收单》。"},
+            {"type":"选择题","number":29,"text":"项目交付及时率的统计口径是？","options":["交付项目数/应交付项目数","实际验收时间<=计划验收时间","交维项目数/应交付项目数","实际验收时间+60天内接维"],"correctAnswer":"B","explanation":"ICT售中考核指标说明中对交付及时率的定义是实际验收时间不晚于计划验收时间。"},
+            {"type":"选择题","number":30,"text":"通过HCIE认证，在积分考评中可加多少分？","options":["100分","200分","300分","500分"],"correctAnswer":"B","explanation":"积分模版中'通过相关考证'的明确规定每项加200分。"},
+
+            // 判断题 31-50
+            {"type":"判断题","number":31,"text":"项目经理可以委托分包单位员工代表公司在工程签证等材料上签字。","options":["正确","错误"],"correctAnswer":"×","explanation":"实施阶段法律风险防范明确要求必须由公司自有人员完成，不可委托。"},
+            {"type":"判断题","number":32,"text":"项目售中交付经理是项目售中阶段的核心负责人。","options":["正确","错误"],"correctAnswer":"√","explanation":"售中交付管理要求中明确其统筹项目售中启动、交付工作的职责。"},
+            {"type":"判断题","number":33,"text":"随工日志的更新频率对硬件集成类项目没有硬性要求。","options":["正确","错误"],"correctAnswer":"×","explanation":"过程规范扣分项明确要求每月至少更新2条随工日志。"},
+            {"type":"判断题","number":34,"text":"项目转售中后，售前经理的职责即告结束，无需再参与项目。","options":["正确","错误"],"correctAnswer":"×","explanation":"售中交付环节中，售前经理在项目实施启动等阶段仍需协调客情关系。"},
+            {"type":"判断题","number":35,"text":"施工现场人员未佩戴安全帽，若进度紧张可先施工后补戴。","options":["正确","错误"],"correctAnswer":"×","explanation":"安全管理是红线，发现问题应立即暂停施工，待整改合格后方可继续。"},
+            {"type":"判断题","number":36,"text":"'纯运维'模式的项目没有售中环节，签订合同后直接转维。","options":["正确","错误"],"correctAnswer":"√","explanation":"DICT系统实施流程中对项目类型的定义：纯运维模式直接转维。"},
+            {"type":"判断题","number":37,"text":"项目实际验收日期可以早于DICT系统中登记的计划验收日期。","options":["正确","错误"],"correctAnswer":"√","explanation":"只要实际日期不晚于计划日期，即为及时交付。"},
+            {"type":"判断题","number":38,"text":"售中APP中，软件集成类项目需要填写随工日志。","options":["正确","错误"],"correctAnswer":"×","explanation":"软件集成类项目应填写软件周报，硬件集成类填随工日志。"},
+            {"type":"判断题","number":39,"text":"项目发生客户投诉，只会影响客户满意度，不涉及积分扣罚。","options":["正确","错误"],"correctAnswer":"×","explanation":"积分模版中'扣分项'明确列出了客户投诉的扣分规则（100-300分/次）。"},
+            {"type":"判断题","number":40,"text":"所有ICT项目在呈批时都必须确定'项目实施类型'。","options":["正确","错误"],"correctAnswer":"√","explanation":"DICT系统实施流程-确认项目实施类型中明确此为立项要求。"},
+            {"type":"判断题","number":41,"text":"特种作业人员（如电工、焊工）可以无证上岗，只要有经验即可。","options":["正确","错误"],"correctAnswer":"×","explanation":"施工前核查和安全管理中均强调必须'持证上岗'。"},
+            {"type":"判断题","number":42,"text":"项目终验报告中的客户联系人电话将用于省公司的满意度回访。","options":["正确","错误"],"correctAnswer":"√","explanation":"项目满意度指标说明中明确回访依据提交终验审核时的客户联系人电话。"},
+            {"type":"判断题","number":43,"text":"项目变更只需口头通知相关方，无需编制书面申请单。","options":["正确","错误"],"correctAnswer":"×","explanation":"项目变更管理要求必须编制《项目变更申请单》等书面文件。"},
+            {"type":"判断题","number":44,"text":"在售中APP中，项目经理可以查看全省所有项目的详情。","options":["正确","错误"],"correctAnswer":"×","explanation":"权限配置说明指出，项目经理只能查看自己所管理的项目。"},
+            {"type":"判断题","number":45,"text":"安全生产责任书只需与施工单位签订，与后向集成商无关。","options":["正确","错误"],"correctAnswer":"×","explanation":"项目安全管理要求需与'后向集成商、施工单位等'签订安全协议。"},
+            {"type":"判断题","number":46,"text":"项目资料可以根据建设单位的要求进行适当的调整和编制。","options":["正确","错误"],"correctAnswer":"√","explanation":"项目资料管理中注明，部分建设单位有特殊要求需遵循。"},
+            {"type":"判断题","number":47,"text":"项目交维完成后，项目状态在DICT系统中会变为'售后（待结项）'。","options":["正确","错误"],"correctAnswer":"√","explanation":"名词解释及示例中描述了项目状态变化流程：终验→待交维→售后。"},
+            {"type":"判断题","number":48,"text":"软件平台开发项目的测试报告可以没有具体测试项和过程。","options":["正确","错误"],"correctAnswer":"×","explanation":"资料典型问题案例集中指出测试报告无实质内容属于问题。"},
+            {"type":"判断题","number":49,"text":"后向合同的签订必须在项目转入售中之后完成。","options":["正确","错误"],"correctAnswer":"×","explanation":"转售中时效要求指出，后向合同可在前向合同签订后30天内完成。"},
+            {"type":"判断题","number":50,"text":"项目延期交付只会增加成本，不会对公司形象造成影响。","options":["正确","错误"],"correctAnswer":"×","explanation":"项目进度管理部分明确指出项目延期'有损公司形象'。"},
+
+            // 简答/案例题 51-60
+            {"type":"简答/案例","number":51,"text":"简述售中交付经理在项目安全管理中的主要职责（至少列出4项）。","options":[],"correctAnswer":"","explanation":"1. 负责项目实施过程中的安全交底与培训；2. 进行安全管理'三检查'；3. 发现安全问题立即暂停施工并要求整改；4. 检查确认整改完毕后方可允许再次施工；5. 与后向集成商等签订安全协议。"},
+            {"type":"简答/案例","number":52,"text":"请列出硬件集成类项目在'开工'里程碑节点需要上传的主要资料清单（至少5种）。","options":[],"correctAnswer":"","explanation":"施工组织设计、保险证明、安全生产责任书、安全施工协议、开工报告、施工工作区域图、施工人员资质、定额管理（含特种作业证等）、安全教育培训记录、安全交底文件等。"},
+            {"type":"简答/案例","number":53,"text":"案例：某硬件集成项目，省公司检查发现随工日志当月仅更新1条，且现场照片显示有施工人员未戴安全帽。请问该项目在积分考评中可能会面临哪些扣分项？","options":[],"correctAnswer":"","explanation":"1. 随工日志更新频次不达标：每项目扣100分；2. 施工现场安全措施不到位（未佩戴安全护具）：属于DICT及APP规范操作问题，市公司检查未整改每条扣100分；若为省公司通报则扣200分/次。"},
+            {"type":"简答/案例","number":54,"text":"项目实施过程中，业主单位提出重大设计变更。作为售中交付经理，你应该遵循怎样的规范流程？","options":[],"correctAnswer":"","explanation":"1. 上报售前经理；2. 编制《项目变更申请单》、《项目需求变更说明书》；3. 售前经理协调建设单位签字盖章；4. 若金额变更超10%，上报分公司进行效益评估，并报省（市）公司同意；5. 严禁未经审批私自变更。"},
+            {"type":"简答/案例","number":55,"text":"请说明在DICT系统中，'及时交付'和'及时交维'分别是如何判定的？","options":[],"correctAnswer":"","explanation":"及时交付：项目实际验收时间不晚于项目计划验收时间，且终验审核通过。及时交维：在项目实际验收日期之后的60个自然日内，完成省公司审核接维，项目状态变为'售后（待结项）'。"},
+            {"type":"简答/案例","number":56,"text":"案例：某项目终验后，售中交付经理在DICT系统操作交维时，发现无法发起流程。请分析可能的原因（至少3种）。","options":[],"correctAnswer":"","explanation":"1. 项目终验审核尚未通过，系统状态未更新为'待交维'；2. 项目为'纯建设'模式，无售后交维环节；3. 系统权限问题，该账号无操作交维流程的权限；4. 项目信息不完整或有必填项缺失，系统校验不通过。"},
+            {"type":"简答/案例","number":57,"text":"简述售中APP中'问题直通车'功能的主要操作流程。","options":[],"correctAnswer":"","explanation":"1. 项目经理（或其他有权限人员）发现项目实施问题，在APP中新增问题单；2. 问题单指派给相关的第三方支撑人员；3. 第三方支撑人员处理问题；4. 处理完成后，在APP中反馈处理结果给问题发起人；5. 问题发起人可对处理结果进行审核确认。"},
+            {"type":"简答/案例","number":58,"text":"项目验收阶段，应如何操作以确保客户满意度回访能获得10分？","options":[],"correctAnswer":"","explanation":"1. 在DICT系统提交终验审核前，准确填写满意度回访联系人及电话（确保是知晓项目情况并能给予正面评价的客户联系人）；2. 进行预回访：主动联系该联系人，沟通项目情况，确认其满意，并礼貌提醒其配合省公司的正式回访。"},
+            {"type":"简答/案例","number":59,"text":"案例：检查发现某项目开工报告由'集客部'盖章，而非与建设单位签订前向合同的公司实体公章。这种做法存在什么风险？正确的做法是什么？","options":[],"correctAnswer":"","explanation":"风险：用印主体不一致，可能导致法律效力受质疑，在结算、审计时产生纠纷，文件不被认可。正确做法：所有对外法律文件（如开工报告、验收报告）的公章主体，必须与前向合同的签约主体严格保持一致。"},
+            {"type":"简答/案例","number":60,"text":"请阐述项目售中资料管理的重要性。","options":[],"correctAnswer":"","explanation":"1. 是项目建设的依据和记录，确保过程可追溯；2. 直接影响工程的竣工验收和款项结算；3. 是应对内外部检查、审计的必要凭证；4. 规范的资料是项目质量和合规性的体现；5. 完整的资料是项目顺利交维和后期维护的基础。"}
+        ];
+
+        // ========== 系统变量 ==========
+        let examData = {
+            userName: '',
+            userDepartment: '',
+            userEmployeeId: '',
+            startTime: null,
+            endTime: null,
+            answers: [],
+            score: 0
+        };
+
+        let allScores = JSON.parse(localStorage.getItem('ictExamScores')) || [];
+        let currentQuestionIndex = 0;
+        let examTimer = null;
+
+        // ========== 权限检查函数 ==========
+        function checkAdminPermission(userName) {
+            return userName === ADMIN_NAME;
+        }
+
+        function showAdminPanel() {
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('admin-screen').classList.add('active');
+            document.getElementById('admin-badge').style.display = 'block';
+            loadAdminStatistics();
+        }
+
+        // ========== 考试核心功能 ==========
+        function startExam() {
+            const name = document.getElementById('user-name').value.trim();
+            const department = document.getElementById('user-department').value.trim();
+            const employeeId = document.getElementById('user-employee-id').value.trim();
+            
+            if (!name || !department || !employeeId) {
+                alert('请填写完整的个人信息');
+                return;
+            }
+            
+            // 权限检查
+            if (checkAdminPermission(name)) {
+                showAdminPanel();
+                return;
+            }
+            
+            examData.userName = name;
+            examData.userDepartment = department;
+            examData.userEmployeeId = employeeId;
+            examData.startTime = new Date();
+            examData.answers = new Array(questions.length).fill(null);
+            examData.score = 0;
+            
+            // 切换到考试屏幕
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('exam-screen').classList.add('active');
+            
+            // 显示考试时间
+            updateTimeDisplay();
+            examTimer = setInterval(updateTimeDisplay, 1000);
+            
+            // 显示第一题
+            showQuestion(0);
+        }
+
+        function showQuestion(index) {
+            currentQuestionIndex = index;
+            const question = questions[index];
+            const questionDisplay = document.getElementById('question-display');
+            
+            // 更新进度条
+            const progress = ((index + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            
+            // 更新题目计数器
+            document.getElementById('question-counter').textContent = `题目 ${index + 1}/${questions.length}`;
+            
+            // 构建题目HTML
+            let optionsHtml = '';
+            
+            if (question.type === "选择题") {
+                question.options.forEach((option, i) => {
+                    const optionLetter = String.fromCharCode(65 + i);
+                    const isSelected = examData.answers[index] === optionLetter;
+                    optionsHtml += `
+                        <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption('${optionLetter}')">
+                            ${optionLetter}. ${option}
+                        </div>
+                    `;
+                });
+            } else if (question.type === "判断题") {
+                question.options.forEach((option, i) => {
+                    const optionValue = i === 0 ? "√" : "×";
+                    const isSelected = examData.answers[index] === optionValue;
+                    optionsHtml += `
+                        <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption('${optionValue}')">
+                            ${option}
+                        </div>
+                    `;
+                });
+            } else {
+                // 简答题
+                optionsHtml = `
+                    <textarea id="answer-text" placeholder="请输入您的答案...">${examData.answers[index] || ''}</textarea>
+                    <button class="btn" onclick="saveAnswer()">保存答案</button>
+                `;
+            }
+            
+            questionDisplay.innerHTML = `
+                <div class="question-container">
+                    <div class="question-number">${question.type} 第${question.number}题</div>
+                    <div class="question-text">${question.text}</div>
+                    <div class="options">${optionsHtml}</div>
+                </div>
+            `;
+            
+            // 更新导航按钮状态
+            document.getElementById('prev-btn').style.display = index === 0 ? 'none' : 'inline-block';
+            document.getElementById('next-btn').style.display = index === questions.length - 1 ? 'none' : 'inline-block';
+            document.getElementById('submit-btn').style.display = index === questions.length - 1 ? 'inline-block' : 'none';
+        }
+
+        function selectOption(option) {
+            examData.answers[currentQuestionIndex] = option;
+            showQuestion(currentQuestionIndex);
+        }
+
+        function saveAnswer() {
+            if (questions[currentQuestionIndex].type === "简答/案例") {
+                const answerText = document.getElementById('answer-text').value;
+                examData.answers[currentQuestionIndex] = answerText;
+                alert('答案已保存');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                showQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                showQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function updateTimeDisplay() {
+            if (examData.startTime) {
+                const now = new Date();
+                const elapsed = Math.floor((now - examData.startTime) / 1000);
+                const hours = Math.floor(elapsed / 3600);
+                const minutes = Math.floor((elapsed % 3600) / 60);
+                const seconds = elapsed % 60;
+                
+                document.getElementById('time-display').textContent = 
+                    `考试时间: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function submitExam() {
+            if (confirm('确定要提交试卷吗？提交后无法修改答案。')) {
+                clearInterval(examTimer);
+                examData.endTime = new Date();
+                calculateScore();
+                showResults();
+            }
+        }
+
+        function calculateScore() {
+            let score = 0;
+            const results = [];
+            
+            questions.forEach((question, index) => {
+                const userAnswer = examData.answers[index];
+                let isCorrect = false;
+                let points = 0;
+                
+               if (question.type === "选择题") {
+    isCorrect = userAnswer === question.correctAnswer;
+    points = isCorrect ? 2 : 0; // 选择题每题2分
+} else if (question.type === "判断题") {
+    isCorrect = userAnswer === question.correctAnswer;
+    points = isCorrect ? 1 : 0; // 判断题每题1分
+} else {
+    // 简答题评分逻辑
+    points = userAnswer && userAnswer.length > 10 ? 2 : 0; // 简答题每题2分
+    isCorrect = points > 0;
+}
+                function scoreEssayQuestion(userAnswer) {
+    if (!userAnswer || userAnswer.trim().length === 0) {
+        return 0; // 未作答得0分
+    }
+    
+    const answerLength = userAnswer.trim().length;
+    let points = 0;
+    
+    if (answerLength >= 100) {
+        points = 2; // 答案详实完整，得2分
+    } else if (answerLength >= 50) {
+        points = 1; // 答案基本完整，得1分
+    } else if (answerLength >= 10) {
+        points = 0.5; // 答案过于简略，得0.5分
+    }
+    
+    return points;
+}
+                score += points;
+                results.push({
+                    question: question,
+                    userAnswer: userAnswer,
+                    isCorrect: isCorrect,
+                    points: points
+                });
+            });
+            
+            examData.score = score;
+            examData.results = results;
+            
+            // 保存成绩
+            const scoreRecord = {
+                name: examData.userName,
+                department: examData.userDepartment,
+                employeeId: examData.userEmployeeId,
+                score: examData.score,
+                time: examData.endTime.toLocaleString(),
+                timestamp: examData.endTime.getTime()
+            };
+            
+            allScores.push(scoreRecord);
+            allScores.sort((a, b) => b.score - a.score);
+            localStorage.setItem('ictExamScores', JSON.stringify(allScores));
+        }
+
+        function showResults() {
+            document.getElementById('exam-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+            
+            // 显示分数
+            document.getElementById('score-display').textContent = `${examData.score}分`;
+            
+            // 显示通过状态
+            const passStatus = document.getElementById('pass-status');
+            if (examData.score >= 60) {
+                passStatus.innerHTML = '<span style="color:#27ae60; font-weight:bold;">✓ 考试通过</span>';
+            } else {
+                passStatus.innerHTML = '<span style="color:#e74c3c; font-weight:bold;">✗ 考试未通过</span>';
+            }
+            
+            // 显示答题详情
+            const resultDetails = document.getElementById('result-details');
+            resultDetails.innerHTML = '';
+            
+            examData.results.forEach((result, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.className = `result-item ${result.isCorrect ? 'correct' : 'incorrect'}`;
+                
+                resultItem.innerHTML = `
+                    <strong>第${index + 1}题 (${result.points}分)</strong><br>
+                    <strong>您的答案:</strong> ${result.userAnswer || '未作答'}<br>
+                    ${!result.isCorrect ? `<strong>正确答案:</strong> ${result.question.correctAnswer}<br>` : ''}
+                    <strong>解析:</strong> ${result.question.explanation}
+                `;
+                
+                resultDetails.appendChild(resultItem);
+            });
+            
+            // 显示个人排名
+            updatePersonalRanking();
+        }
+
+        function updatePersonalRanking() {
+            const rankingTable = document.getElementById('ranking-table');
+            // 清空现有行
+            while (rankingTable.rows.length > 1) {
+                rankingTable.deleteRow(1);
+            }
+            
+            // 找到当前用户的排名
+            const userRank = allScores.findIndex(score => 
+                score.employeeId === examData.userEmployeeId && 
+                score.timestamp === examData.endTime.getTime()
+            ) + 1;
+            
+            if (userRank > 0) {
+                const userScore = allScores[userRank - 1];
+                const row = rankingTable.insertRow();
+                row.innerHTML = `
+                    <td>${userRank}</td>
+                    <td>${userScore.name}</td>
+                    <td>${userScore.department}</td>
+                    <td>${userScore.employeeId}</td>
+                    <td><strong>${userScore.score}</strong></td>
+                    <td>${userScore.time}</td>
+                `;
+            }
+        }
+
+        function viewPersonalStats() {
+            const userScores = allScores.filter(score => 
+                score.employeeId === examData.userEmployeeId
+            ).sort((a, b) => b.timestamp - a.timestamp);
+            
+            if (userScores.length === 0) {
+                alert('暂无您的考试记录');
+                return;
+            }
+            
+            const bestScore = Math.max(...userScores.map(s => s.score));
+            const avgScore = (userScores.reduce((sum, s) => sum + s.score, 0) / userScores.length).toFixed(1);
+            const passCount = userScores.filter(s => s.score >= 60).length;
+            
+            let statsHTML = `
+                <div style="padding:20px; font-family:Microsoft YaHei;">
+                    <h2>📊 您的考试统计 - ${examData.userName}</h2>
+                    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin:20px 0;">
+                        <div style="background:#f8f9fa; padding:15px; border-radius:8px; text-align:center;">
+                            <div style="font-size:2em; font-weight:bold;">${userScores.length}</div>
+                            <div style="color:#666;">考试次数</div>
+                        </div>
+                        <div style="background:#f8f9fa; padding:15px; border-radius:8px; text-align:center;">
+                            <div style="font-size:2em; font-weight:bold;">${bestScore}</div>
+                            <div style="color:#666;">最高分</div>
+                        </div>
+                        <div style="background:#f8f9fa; padding:15px; border-radius:8px; text-align:center;">
+                            <div style="font-size:2em; font-weight:bold;">${avgScore}</div>
+                            <div style="color:#666;">平均分</div>
+                        </div>
+                        <div style="background:#f8f9fa; padding:15px; border-radius:8px; text-align:center;">
+                            <div style="font-size:2em; font-weight:bold;">${passCount}</div>
+                            <div style="color:#666;">通过次数</div>
+                        </div>
+                    </div>
+                    <h3>历史成绩记录：</h3>
+                    <table border="1" style="width:100%; border-collapse:collapse; margin-top:10px;">
+                        <tr style="background:#34495e; color:white;">
+                            <th style="padding:10px;">考试时间</th>
+                            <th style="padding:10px;">分数</th>
+                            <th style="padding:10px;">状态</th>
+                        </tr>
+            `;
+            
+            userScores.forEach(score => {
+                const status = score.score >= 60 ? '<span style="color:green">通过</span>' : '<span style="color:red">未通过</span>';
+                statsHTML += `
+                    <tr>
+                        <td style="padding:8px; border:1px solid #ddd;">${score.time}</td>
+                        <td style="padding:8px; border:1px solid #ddd; text-align:center;"><strong>${score.score}</strong></td>
+                        <td style="padding:8px; border:1px solid #ddd; text-align:center;">${status}</td>
+                    </tr>
+                `;
+            });
+            
+            statsHTML += '</table></div>';
+            
+            const statsWindow = window.open('', '个人统计', 'width=600,height=400');
+            statsWindow.document.write(statsHTML);
+        }
+
+        function restartExam() {
+            clearInterval(examTimer);
+            document.getElementById('result-screen').classList.remove('active');
+            document.getElementById('login-screen').classList.add('active');
+            
+            // 清空输入框
+            document.getElementById('user-name').value = '';
+            document.getElementById('user-department').value = '';
+            document.getElementById('user-employee-id').value = '';
+        }
+
+        // ========== 管理员功能 ==========
+        function loadAdminStatistics() {
+            const allScores = JSON.parse(localStorage.getItem('ictExamScores')) || [];
+            const totalExams = allScores.length;
+            const avgScore = totalExams > 0 ? (allScores.reduce((sum, score) => sum + score.score, 0) / totalExams).toFixed(1) : 0;
+            const passRate = totalExams > 0 ? ((allScores.filter(score => score.score >= 60).length / totalExams) * 100).toFixed(1) : 0;
+            const uniqueUsers = new Set(allScores.map(score => score.employeeId)).size;
+            
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${totalExams}</div>
+                    <div class="stat-label">总考试次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${uniqueUsers}</div>
+                    <div class="stat-label">参考人数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${avgScore}</div>
+                    <div class="stat-label">平均分数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${passRate}%</div>
+                    <div class="stat-label">通过率</div>
+                </div>
+            `;
+            
+            document.getElementById('stats-grid').innerHTML = statsHTML;
+        }
+
+        function showAllScores() {
+            const allScores = JSON.parse(localStorage.getItem('ictExamScores')) || [];
+            const sortedScores = allScores.sort((a, b) => b.score - a.score);
+            
+            let scoresHTML = '<h3>📋 全部考试成绩列表</h3>';
+            scoresHTML += '<table class="ranking-table"><tr><th>排名</th><th>姓名</th><th>部门</th><th>工号</th><th>分数</th><th>考试时间</th><th>状态</th></tr>';
+            
+            sortedScores.forEach((score, index) => {
+                const status = score.score >= 60 ? '<span style="color:green">通过</span>' : '<span style="color:red">未通过</span>';
+                scoresHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${score.name}</td>
+                        <td>${score.department}</td>
+                        <td>${score.employeeId}</td>
+                        <td><strong>${score.score}</strong></td>
+                        <td>${score.time}</td>
+                        <td>${status}</td>
+                    </tr>
+                `;
+            });
+            
+            scoresHTML += '</table>';
+            document.getElementById('admin-score-list').innerHTML = scoresHTML;
+        }
+
+        function exportAllScores() {
+            const allScores = JSON.parse(localStorage.getItem('ictExamScores')) || [];
+            
+            if (allScores.length === 0) {
+                alert('暂无考试成绩数据');
+                return;
+            }
+
+            const format = prompt('请选择导出格式：\n1. Excel格式(CSV)\n2. JSON格式\n3. 文本格式', '1');
+            
+            switch(format) {
+                case '1':
+                    exportToCSV(allScores);
+                    break;
+                case '2':
+                    exportToJSON(allScores);
+                    break;
+                case '3':
+                    exportToText(allScores);
+                    break;
+                default:
+                    exportToCSV(allScores);
+            }
+        }
+
+        function exportToCSV(scores) {
+            const headers = ['排名', '姓名', '部门', '工号', '分数', '考试时间', '状态'];
+            let csvContent = headers.join(',') + '\n';
+            
+            scores.sort((a, b) => b.score - a.score).forEach((score, index) => {
+                const status = score.score >= 60 ? '通过' : '未通过';
+                const row = [
+                    index + 1,
+                    `"${score.name}"`,
+                    `"${score.department}"`,
+                    `"${score.employeeId}"`,
+                    score.score,
+                    `"${score.time}"`,
+                    `"${status}"`
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            downloadFile(csvContent, `ICT考试成绩_${new Date().toLocaleDateString()}.csv`, 'text/csv');
+        }
+
+        function exportToJSON(scores) {
+            const dataStr = JSON.stringify(scores, null, 2);
+            downloadFile(dataStr, `ICT考试成绩_${new Date().toLocaleDateString()}.json`, 'application/json');
+        }
+
+        function exportToText(scores) {
+            let textContent = 'ICT售中业务考试系统 - 成绩报表\n';
+            textContent += `生成时间：${new Date().toLocaleString()}\n`;
+            textContent += `生成人员：${ADMIN_NAME}\n`;
+            textContent += '='.repeat(60) + '\n\n';
+            
+            scores.sort((a, b) => b.score - a.score).forEach((score, index) => {
+                const status = score.score >= 60 ? '通过' : '未通过';
+                textContent += `排名：${index + 1}\n`;
+                textContent += `姓名：${score.name}\n`;
+                textContent += `部门：${score.department}\n`;
+                textContent += `工号：${score.employeeId}\n`;
+                textContent += `分数：${score.score}\n`;
+                textContent += `时间：${score.time}\n`;
+                textContent += `状态：${status}\n`;
+                textContent += '-'.repeat(40) + '\n';
+            });
+            
+            downloadFile(textContent, `ICT考试成绩_${new Date().toLocaleDateString()}.txt`, 'text/plain');
+        }
+
+        function downloadFile(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert(`✅ 成绩文件 ${fileName} 下载成功！`);
+        }
+
+        function clearAllScores() {
+            if (confirm('确定要清空所有成绩数据吗？此操作不可恢复！')) {
+                localStorage.removeItem('ictExamScores');
+                allScores = [];
+                alert('所有成绩数据已清空！');
+                loadAdminStatistics();
+                document.getElementById('admin-score-list').innerHTML = '';
+            }
+        }
+
+        function backToLogin() {
+            document.getElementById('admin-screen').classList.remove('active');
+            document.getElementById('login-screen').classList.add('active');
+            document.getElementById('admin-badge').style.display = 'none';
+        }
+
+        // ========== 页面加载完成后的初始化 ==========
+        window.onload = function() {
+            console.log('ICT考试系统已加载完成');
+            console.log('管理员姓名：', ADMIN_NAME);
+            console.log('题目总数：', questions.length);
+        };
+    </script>
+</body>
+</html>
